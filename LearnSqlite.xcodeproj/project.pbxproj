@@ -29,6 +29,7 @@
 		003C726721E79A1A00F6A030 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = SOURCE_ROOT; };
 		003C726821E79A1A00F6A030 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = SOURCE_ROOT; };
 		003C726921E79A1A00F6A030 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = SOURCE_ROOT; };
+		003C726C21E87A1200F6A030 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				003C726821E79A1A00F6A030 /* sqlite3.c */,
+				003C726C21E87A1200F6A030 /* README.md */,
 				003C726921E79A1A00F6A030 /* sqlite3.h */,
 				003C726721E79A1A00F6A030 /* sqlite3ext.h */,
 				003C725C21E76C3500F6A030 /* main.c */,
