@@ -30,3 +30,17 @@ case CC_SPACE: {
     }
 ```
 这个主要是判断分隔符，同时也处理有多个分隔符的情况，这里最关键的是理解sqlite3Isspace这个这个是将如果z[i]是分隔符，然后将这个分隔符与0x01进行与运算，space的ascii值为32，sqlite3CtypeMap[32]对应的是1,所对应的二进制为01，与0x01进行与运算后值为1,这里可能会有很多人疑问，有没有不是分隔符他在sqlite3CtypeMap返回的值与0x01与运算后也是1呢，这个后边有空在研究他在数学上或者在设计上的原理。如何避免碰撞。
+
+```
+case CC_MINUS: {
+if( z[1]=='-' ){
+for(i=2; (c=z[i])!=0 && c!='\n'; i++){}
+*tokenType = TK_SPACE;   /* IMP: R-22934-25134 */
+return i;
+}
+*tokenType = TK_MINUS;
+return 1;
+}
+```
+这里处理‘-’符号和sql的单行注释 --；
+如果属于单行注释，那么获取该行注释的长度 返回一个TK_SPACE类型，如果不属于则返回TK_MINUS类型
