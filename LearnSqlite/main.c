@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
         len = sqlite3GetToken((unsigned char *)sql, &tokenType);
         i = 0;
       
-        
+        //test
         printf("len %d\n",len);
         printf("tokentype:%d\n",tokenType);
         
