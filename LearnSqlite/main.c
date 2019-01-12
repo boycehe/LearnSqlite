@@ -7,45 +7,42 @@
 //
 
 #include <stdio.h>
-#include "sqlite3.h"
+#include <string.h>
+#include "sqlite_token.h"
 
-sqlite3 *newDBconnection;
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     
   
     
-    const char *path = "/Users/heboyce/Desktop/demo.db";
-    //参数2:指向数据库变量的指针的地址
-    //返回值:数据库操作结果
-    int ret = sqlite3_open(path, &newDBconnection);
-    //判断执行结果
+ 
     
-    if (ret == SQLITE_OK) {
-        printf("create db success");
+    const char * sql = "/**/create table if not exists t_student(id integer primary key autoincrement, name text not null, score real default 0, sex text default '不明');";
+  
+    int len = 0;
+    for (int i = 0; i < strlen(sql) ; i+=len) {
+   
+        
+        int tokenType = 0;
+        sql = &sql[i];
+        printf("sql:%s\n",sql);
+        len = sqlite3GetToken((unsigned char *)sql, &tokenType);
+        i = 0;
+      
+        
+        printf("len %d\n",len);
+        printf("tokentype:%d\n",tokenType);
+        
+        
     }
    
     
-    const char * sql = "CREATE TABLE IF NOT EXISTS t_Student(id integer PRIMARY KEY AUTOINCREMENT, name text NOT NULL, score real DEFAULT 0, sex text DEFAULT '不明');";
-    
-  
-    int ret1 = sqlite3_exec(newDBconnection, sql, NULL, NULL, NULL);
-    
- 
     
    
     
     return 0;
 }
 
-int openDb(){
-    
-    const char *path = "";
-    //参数2:指向数据库变量的指针的地址
-    //返回值:数据库操作结果
-    int ret = sqlite3_open(path, &newDBconnection);
-    //判断执行结果
-    return (ret == SQLITE_OK);
-    
-}
+
