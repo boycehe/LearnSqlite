@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
     
  
     
-    const char * sql = "/**/create table if not exists t_student(id integer primary key autoincrement, name text not null, score real default 0, sex text default '不明');";
+    const char * sql = "   /*fafafjalf*/create table if not exists t_student(id integer primary key autoincrement, name text not null, score real default 0, sex text default '不明');";
   
     int len = 0;
     for (int i = 0; i < strlen(sql) ; i+=len) {
@@ -33,6 +33,13 @@ int main(int argc, const char * argv[]) {
       
         //test
         printf("len %d\n",len);
+        
+        printf("token:");
+        for (int m = 0; m < len; m++) {
+            printf("%c",sql[m]);
+        }
+        printf("\n");
+        
         printf("tokentype:%d\n",tokenType);
         
         

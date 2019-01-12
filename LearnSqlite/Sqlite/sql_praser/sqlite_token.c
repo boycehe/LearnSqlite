@@ -486,7 +486,11 @@ int sqlite3GetToken(const unsigned char *z, int *tokenType){
             testcase( z[0]=='\n' );
             testcase( z[0]=='\f' );
             testcase( z[0]=='\r' );
-            for(i=1; sqlite3Isspace(z[i]); i++){}
+           
+            for(i=1; sqlite3Isspace(z[i]); i++){
+               
+                
+            }
             *tokenType = TK_SPACE;
             return i;
         }
