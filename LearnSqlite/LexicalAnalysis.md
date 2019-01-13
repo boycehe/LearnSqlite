@@ -44,3 +44,21 @@ return 1;
 ```
 这里处理‘-’符号和sql的单行注释 --；
 如果属于单行注释，那么获取该行注释的长度 返回一个TK_SPACE类型，如果不属于则返回TK_MINUS类型
+```
+case CC_SLASH: {
+if( z[1]!='*' || z[2]==0 ){
+*tokenType = TK_SLASH;
+return 1;
+}
+for(i=3, c=z[2]; (c!='*' || z[i]!='/') && (c=z[i])!=0; i++){}
+if( c ) i++;
+*tokenType = TK_SPACE;   /* IMP: R-22934-25134 */
+return i;
+}
+```
+首先判断他是不是注释 如果不是注释直接范围 1的长度 并且tokentype为TK_SLASH
+如果他是注释就会找到注释的长度，如果注释没有结束符号则会吧整个字符串作为注释。
+sqlite把注释归属空格token，
+for循环中 (c!='*' || z[i]!='/') 是判断是否遇到了'*/'结尾，如果遇到这个结尾则代表注释结束
+返回token长度
+

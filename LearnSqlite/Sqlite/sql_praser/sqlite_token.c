@@ -528,7 +528,9 @@ int sqlite3GetToken(const unsigned char *z, int *tokenType){
                 *tokenType = TK_SLASH;
                 return 1;
             }
-            for(i=3, c=z[2]; (c!='*' || z[i]!='/') && (c=z[i])!=0; i++){}
+            for(i=3, c=z[2]; (c!='*' || z[i]!='/') && (c=z[i])!=0; i++){
+                printf("CC_SLASH %c\n",z[i]);
+            }
             if( c ) i++;
             *tokenType = TK_SPACE;   /* IMP: R-22934-25134 */
             return i;
