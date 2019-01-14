@@ -62,3 +62,38 @@ sqlite把注释归属空格token，
 for循环中 (c!='*' || z[i]!='/') 是判断是否遇到了'*/'结尾，如果遇到这个结尾则代表注释结束
 返回token长度
 
+```
+case CC_DIGIT: {
+    *tokenType = TK_INTEGER;
+#ifndef SQLITE_OMIT_HEX_INTEGER
+    if( z[0]=='0' && (z[1]=='x' || z[1]=='X') && sqlite3Isxdigit(z[2]) ){
+    for(i=3; sqlite3Isxdigit(z[i]); i++){}
+    return i;
+    }
+#endif
+    for(i=0; sqlite3Isdigit(z[i]); i++){}
+#ifndef SQLITE_OMIT_FLOATING_POINT
+    if( z[i]=='.' ){
+    i++;
+    while( sqlite3Isdigit(z[i]) ){ i++; }
+    *tokenType = TK_FLOAT;
+    }
+    if( (z[i]=='e' || z[i]=='E') &&
+    ( sqlite3Isdigit(z[i+1])
+    || ((z[i+1]=='+' || z[i+1]=='-') && sqlite3Isdigit(z[i+2]))
+    )
+    ){
+    i += 2;
+    while( sqlite3Isdigit(z[i]) ){ i++; }
+    *tokenType = TK_FLOAT;
+    }
+#endif
+    while( IdChar(z[i]) ){
+    *tokenType = TK_ILLEGAL;
+    i++;
+    }
+    return i;
+}
+```
+这里主要是处理数字
+
