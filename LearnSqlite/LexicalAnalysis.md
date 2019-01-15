@@ -100,4 +100,37 @@ sqlite3Isxdigit 这个宏主要判断数字是不是16进制的。如果不是16
 ，获取十进制数字长度，直到遇到一个非数字的符号，如果这个非数字符号是一个.那么进入处理浮点数的流程。获取浮点数长度。如果遇到非数字字符
 为e，那么首先判断这个格式是否正确，如果正确继续处理浮点数的情况，如果不正确，那么就会归属于非法字符
 
+```
+case CC_VARALPHA: {
+    int n = 0;
+    *tokenType = TK_VARIABLE;
+    for(i=1; (c=z[i])!=0; i++){
+        if( IdChar(c) ){
+            n++;
+#ifndef SQLITE_OMIT_TCL_VARIABLE
+        }else if( c=='(' && n>0 ){
+            do{
+                i++;
+                }while( (c=z[i])!=0 && !sqlite3Isspace(c) && c!=')' );
+            if( c==')' ){
+                i++;
+            }else{
+                *tokenType = TK_ILLEGAL;
+            }
+            break;
+        }else if( c==':' && z[i+1]==':' ){
+            i++;
+#endif
+        }else{
+            break;
+        }
+    }
+    if( n==0 ) *tokenType = TK_ILLEGAL;
+    return i;
+}
+```
+这个case处理sql的变量，sql变量。我这里只在网上查到了@后边跟着变量名称。#:$没有查到
+下边for循环获取变量长度。for循环直到遇到0结束。如果字符c是个标识符那么n++;如果不是标识符
+那么看着该字符串是不是(或者是:如果是(则需要等到他的)的出现，如果不是这两个符号，那么继续进行下一个循环
+。循环结束后如果n = 0则是非法token，返回这个token长度
 
