@@ -155,3 +155,9 @@ case CC_X: {
 这个处理二进制token，如果是x\开头的则是二进制对象，然后获取二进制的长度。
 如果结尾不是'\' 或者长度不是偶数则是非法的token 最后获取准确长度+1.返回长度
 
+```
+while( IdChar(z[i]) ){ i++; }
+*tokenType = TK_ID;
+```
+这个是在case中命中的非TK_ID后，发现是TK_ID，获取identifier长度
+
