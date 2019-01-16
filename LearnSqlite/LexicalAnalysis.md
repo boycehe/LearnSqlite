@@ -1,6 +1,50 @@
 #sqlite中的sql语句的词法分析
 
 ### static int keywordCode(const char *z, int n, int *pType); 
+```
+
+    static int keywordCode(const char *z, int n, int *pType){
+    int i, j;
+    const char *zKW;
+    if( n>=2 ){
+
+        i = ((charMap(z[0])*4) ^ (charMap(z[n-1])*3) ^ n) % 127;
+        for(i=((int)aKWHash[i])-1; i>=0; i=((int)aKWNext[i])-1){
+    
+        if( aKWLen[i]!=n ) continue;
+        j = 0;
+        zKW = &zKWText[aKWOffset[i]];
+#ifdef SQLITE_ASCII
+        while( j<n && (z[j]&~0x20)==zKW[j] ){ j++; }
+#endif
+#ifdef SQLITE_EBCDIC
+        while( j<n && toupper(z[j])==zKW[j] ){ j++; }
+#endif
+        if( j<n ) continue;
+        *pType = aKWCode[i];
+        break;
+        }
+    }
+return n;
+}
+
+```
+charMap(z[0])这里将对应的大写字母转换为小写字母，如果不是字符则ascii不变
+aKWHash这个数组存放的是各个关键词的hash值，
+aKWNext这个数组主要是为了解决多个关键词可能存在的hash冲突
+aKWLen存放的是关键词的长度
+这里的是通过hash算法代替字符串匹配，提升效率。
+1.i = ((charMap(z[0])*4) ^ (charMap(z[n-1])*3) ^ n) % 127; 通过这个公式计算得到i,通过这个i获取aKWHash对应的下标
+2.如果aKWHash的获得新的i
+3.然后用这个i通过aKWLen数组获取关键词的长度，如果长度不相等，说明出现hash冲突，通过aKWNext获取i的下一个值
+4.如果通过aKWLen校验没有发生冲突，那么遍历z，如果与zw前n个字符是否一样，如果一样,则关键词识别成功，如果不是则通过aKWNext获取i的下一个值，重复上边的步骤
+
+这里作者精心设计了这么个算法就是为了提升词法分析的效率
+
+这里可以看做一个对关键词取hash的index，然后aKWHash数组里边返回的值-1，得到新的index，这个
+index到
+
+
 ### static int sqlite3GetToken(const unsigned char *z, int *tokenType);
 这个方法主要是获取z中的第一个toekn，返回的是token长度，同时给tokenType赋值，告诉token类型
 aiClass存放的是ASCII编码，如果使用的是EBCDIC，则就是EBCDIC对应的编码，两者只会支持一种
