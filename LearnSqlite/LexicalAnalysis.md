@@ -134,3 +134,24 @@ case CC_VARALPHA: {
 那么看着该字符串是不是(或者是:如果是(则需要等到他的)的出现，如果不是这两个符号，那么继续进行下一个循环
 。循环结束后如果n = 0则是非法token，返回这个token长度
 
+```
+case CC_X: {
+#ifndef SQLITE_OMIT_BLOB_LITERAL
+    testcase( z[0]=='x' ); testcase( z[0]=='X' );
+    if( z[1]=='\'' ){
+        *tokenType = TK_BLOB;
+        for(i=2; sqlite3Isxdigit(z[i]); i++){}
+        if( z[i]!='\'' || i%2 ){
+            *tokenType = TK_ILLEGAL;
+            while( z[i] && z[i]!='\'' ){ i++; }
+        }
+    if( z[i] ) i++;
+    return i;
+    }
+#endif
+}
+
+```
+这个处理二进制token，如果是x\开头的则是二进制对象，然后获取二进制的长度。
+如果结尾不是'\' 或者长度不是偶数则是非法的token 最后获取准确长度+1.返回长度
+
