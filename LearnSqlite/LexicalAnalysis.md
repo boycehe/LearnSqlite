@@ -205,3 +205,8 @@ while( IdChar(z[i]) ){ i++; }
 ```
 这个是在case中命中的非TK_ID后，发现是TK_ID，获取identifier长度
 
+```
+static int getToken(const unsigned char **pz)
+```
+获取token
+

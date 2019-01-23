@@ -15,4 +15,6 @@
 
 int sqlite3GetToken(const unsigned char *z, int *tokenType);
 
+static int getToken(const unsigned char **pz);
+
 #endif /* sqlite_token_h */
