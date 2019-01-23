@@ -14,6 +14,103 @@
 
 # define testcase(X)
 
+
+#ifdef YYFALLBACK
+static const YYCODETYPE yyFallback[] = {
+    0,  /*          $ => nothing */
+    0,  /*       SEMI => nothing */
+    59,  /*    EXPLAIN => ID */
+    59,  /*      QUERY => ID */
+    59,  /*       PLAN => ID */
+    59,  /*      BEGIN => ID */
+    0,  /* TRANSACTION => nothing */
+    59,  /*   DEFERRED => ID */
+    59,  /*  IMMEDIATE => ID */
+    59,  /*  EXCLUSIVE => ID */
+    0,  /*     COMMIT => nothing */
+    59,  /*        END => ID */
+    59,  /*   ROLLBACK => ID */
+    59,  /*  SAVEPOINT => ID */
+    59,  /*    RELEASE => ID */
+    0,  /*         TO => nothing */
+    0,  /*      TABLE => nothing */
+    0,  /*     CREATE => nothing */
+    59,  /*         IF => ID */
+    0,  /*        NOT => nothing */
+    0,  /*     EXISTS => nothing */
+    59,  /*       TEMP => ID */
+    0,  /*         LP => nothing */
+    0,  /*         RP => nothing */
+    0,  /*         AS => nothing */
+    59,  /*    WITHOUT => ID */
+    0,  /*      COMMA => nothing */
+    59,  /*      ABORT => ID */
+    59,  /*     ACTION => ID */
+    59,  /*      AFTER => ID */
+    59,  /*    ANALYZE => ID */
+    59,  /*        ASC => ID */
+    59,  /*     ATTACH => ID */
+    59,  /*     BEFORE => ID */
+    59,  /*         BY => ID */
+    59,  /*    CASCADE => ID */
+    59,  /*       CAST => ID */
+    59,  /*   CONFLICT => ID */
+    59,  /*   DATABASE => ID */
+    59,  /*       DESC => ID */
+    59,  /*     DETACH => ID */
+    59,  /*       EACH => ID */
+    59,  /*       FAIL => ID */
+    0,  /*         OR => nothing */
+    0,  /*        AND => nothing */
+    0,  /*         IS => nothing */
+    59,  /*      MATCH => ID */
+    59,  /*    LIKE_KW => ID */
+    0,  /*    BETWEEN => nothing */
+    0,  /*         IN => nothing */
+    0,  /*     ISNULL => nothing */
+    0,  /*    NOTNULL => nothing */
+    0,  /*         NE => nothing */
+    0,  /*         EQ => nothing */
+    0,  /*         GT => nothing */
+    0,  /*         LE => nothing */
+    0,  /*         LT => nothing */
+    0,  /*         GE => nothing */
+    0,  /*     ESCAPE => nothing */
+    0,  /*         ID => nothing */
+    59,  /*   COLUMNKW => ID */
+    59,  /*         DO => ID */
+    59,  /*        FOR => ID */
+    59,  /*     IGNORE => ID */
+    59,  /*  INITIALLY => ID */
+    59,  /*    INSTEAD => ID */
+    59,  /*         NO => ID */
+    59,  /*        KEY => ID */
+    59,  /*         OF => ID */
+    59,  /*     OFFSET => ID */
+    59,  /*     PRAGMA => ID */
+    59,  /*      RAISE => ID */
+    59,  /*  RECURSIVE => ID */
+    59,  /*    REPLACE => ID */
+    59,  /*   RESTRICT => ID */
+    59,  /*        ROW => ID */
+    59,  /*       ROWS => ID */
+    59,  /*    TRIGGER => ID */
+    59,  /*     VACUUM => ID */
+    59,  /*       VIEW => ID */
+    59,  /*    VIRTUAL => ID */
+    59,  /*       WITH => ID */
+    59,  /*    CURRENT => ID */
+    59,  /*  FOLLOWING => ID */
+    59,  /*  PARTITION => ID */
+    59,  /*  PRECEDING => ID */
+    59,  /*      RANGE => ID */
+    59,  /*  UNBOUNDED => ID */
+    59,  /*    REINDEX => ID */
+    59,  /*     RENAME => ID */
+    59,  /*   CTIME_KW => ID */
+};
+#endif /* YYFALLBACK */
+
 /************** End of hash.h ************************************************/
 /************** Continuing where we left off in sqliteInt.h ******************/
 /************** Include parse.h in the middle of sqliteInt.h *****************/
@@ -923,4 +1020,34 @@ static int keywordCode(const char *z, int n, int *pType){
         }
     }
     return n;
+}
+
+SQLITE_PRIVATE int sqlite3ParserFallback(int iToken){
+#ifdef YYFALLBACK
+    if( iToken<(int)(sizeof(yyFallback)/sizeof(yyFallback[0])) ){
+        return yyFallback[iToken];
+    }
+#else
+    (void)iToken;
+#endif
+    return 0;
+}
+
+static int getToken(const unsigned char **pz){
+    const unsigned char *z = *pz;
+    int t;                          /* Token type to return */
+    do {
+        z += sqlite3GetToken(z, &t);
+    }while( t==TK_SPACE );
+    if( t==TK_ID
+       || t==TK_STRING
+       || t==TK_JOIN_KW
+       || t==TK_WINDOW
+       || t==TK_OVER
+       || sqlite3ParserFallback(t)==TK_ID
+       ){
+        t = TK_ID;
+    }
+    *pz = z;
+    return t;
 }

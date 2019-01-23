@@ -1,4 +1,4 @@
-#sqlite中的sql语句的词法分析
+#sqlite中的sql语句的词法分析 使用了状态机技术。
 
 ### static int keywordCode(const char *z, int n, int *pType); 
 ```
