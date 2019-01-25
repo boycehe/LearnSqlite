@@ -6,10 +6,6 @@
 //  Copyright © 2019 heboyce. All rights reserved.
 //
 
-
-
-
-
 #include "sqlite_token.h"
 
 # define testcase(X)
