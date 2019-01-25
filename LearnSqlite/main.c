@@ -12,11 +12,20 @@
 
 
 
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-  
+  /*
+    sqlite3 *_db;
     
+
+    const char *t_sql = "create table if not exists t_student (id integer primary key autoincrement, name text, age integer);";
+    char *t_errorMesg = NULL; // 用来存储错误信息
+    int t_result = sqlite3_exec(_db, t_sql, NULL, NULL, &t_errorMesg);
+
+
+*/
  
     
     const char * sql = "xafafafjalf*/-create table if not exists t_student(id integer primary key autoincrement, name text not null, score real default 0, sex text default '不明');";
