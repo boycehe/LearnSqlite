@@ -9,14 +9,30 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "LearnSqlite/dd/sqliteInt.h"
-            timestampString = "570083095.164855"
+            filePath = "LearnSqlite/sqlite/sql_praser/sqlite_token.c"
+            timestampString = "573757528.36474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "534"
-            endingLineNumber = "534"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "888"
+            endingLineNumber = "888"
+            landmarkName = "keywordCode"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LearnSqlite/sqlite/sql_praser/sqlite_token.c"
+            timestampString = "573757528.3655601"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "888"
+            endingLineNumber = "888"
+            landmarkName = "keywordCode"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

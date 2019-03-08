@@ -13,6 +13,6 @@
 
 #include <stdio.h>
 
-
+int sqlite3GetToken(const unsigned char *z, int *tokenType);
 
 #endif /* sqlite_token_h */

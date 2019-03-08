@@ -9,7 +9,7 @@
 #include "sqlite_token.h"
 
 # define testcase(X)
-
+#define SQLITE_ASCII
 
 #ifdef YYFALLBACK
 static const YYCODETYPE yyFallback[] = {
@@ -284,6 +284,12 @@ static const YYCODETYPE yyFallback[] = {
 #define TK_UNCLOSED_STRING                171
 #define TK_SPACE                          172
 #define TK_ILLEGAL                        173
+#define TK_TASK                           174
+#define TK_CANCEL                         175
+#define TK_UPLOAD                         176
+#define TK_HAPPEN                         177
+#define TK_TIMES                          178
+#define TK_SECONDS                        179
 
 #define CC_X          0    /* The letter 'x', or start of BLOB literal */
 #define CC_KYWD       1    /* Alphabetics or '_'.  Usable in a keyword */
@@ -315,7 +321,7 @@ static const YYCODETYPE yyFallback[] = {
 #define CC_ILLEGAL   27    /* Illegal character */
 #define CC_NUL       28    /* 0x00 */
 
-static const char zKWText[613] = {
+static const char zKWText[647] = {
     'R','E','I','N','D','E','X','E','D','E','S','C','A','P','E','A','C','H',
     'E','C','K','E','Y','B','E','F','O','R','E','I','G','N','O','R','E','G',
     'E','X','P','L','A','I','N','S','T','E','A','D','D','A','T','A','B','A',
@@ -350,7 +356,8 @@ static const char zKWText[613] = {
     'K','R','O','W','S','U','N','B','O','U','N','D','E','D','U','N','I','O',
     'N','U','S','I','N','G','V','A','C','U','U','M','V','I','E','W','I','N',
     'D','O','W','I','N','I','T','I','A','L','L','Y','P','R','I','M','A','R',
-    'Y',
+    'Y','T','A','S','K','C','A','N','C','E','L','U','P','L','O','A','D','H',
+    'A','P','P','E','N','T','I','M','E','S','S','E','C','O','N','D','S',
 };
 /* aKWHash[i] is the hash value for the i-th keyword */
 static const unsigned char aKWHash[127] = {
@@ -368,21 +375,21 @@ static const unsigned char aKWHash[127] = {
 /* aKWNext[] forms the hash collision chain.  If aKWHash[i]==0
  ** then the i-th keyword has no more hash collisions.  Otherwise,
  ** the next keyword with the same hash is aKWHash[i]-1. */
-static const unsigned char aKWNext[136] = {
+static const unsigned char aKWNext[142] = {//13
     0,   0,   0,   0,   4,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   2,   0,   0,   0,   0,   0,   0,  13,   0,   0,   0,   0,
+    0,   2,   0,   0,   0,   0,   0,   0,  13,   0,   0,   0,   138,
     0,   7,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,  33,   0,  21,   0,   0,   0,   0,   0,  50,
+    0,   0, 141,   0,  33,   0,  21,   0,   0,   0,   0,   0,  50,
     0,  43,   3,  47,   0,   0,  32,   0,   0,   0,   0,   0,   0,
-    0,   1,  64,   0,   0,  65,   0,  41,   0,  38,   0,   0,   0,
-    0,   0,  49,  75,   0,   0,  30,   0,  58,   0,   0,   0,  31,
-    63,  16,  34,  10,   0,   0,   0,   0,   0,   0,   0,  11,  70,
+    0,   1,  64,   0,   0,  65,   0,  41,   139,  38, 0,   0,   0,
+    0,   0,  49,  75,   0, 142,  30,   0,  58,   0,   0,   0,  31,
+    63,  16,  34,  10,   0,   140,   0,   0,   0,   0,   0,  11,  70,
     91,   0,   0,   8,   0, 108,   0, 101,  28,  52,  68,   0, 112,
-    0,  73,  51,   0,  90,  27,  37,   0,  71,  36,  82,   0,  35,
-    66,  25,  18,   0,   0,  78,
+    0,  73,  51,   0,  90,  27,  37,   137,  71,  36,  82,   0,  35,
+    66, 25,  18,   0,   0,  78,   0,     0,   0,   0,   0,   0,
 };
 /* aKWLen[i] is the length (in bytes) of the i-th keyword */
-static const unsigned char aKWLen[136] = {
+static const unsigned char aKWLen[142] = {
     7,   7,   5,   4,   6,   4,   5,   3,   6,   7,   3,   6,   6,
     7,   7,   3,   8,   2,   6,   5,   4,   4,   3,  10,   4,   6,
     11,   6,   2,   7,   5,   5,   9,   6,   9,   9,   7,  10,  10,
@@ -393,11 +400,11 @@ static const unsigned char aKWLen[136] = {
     6,   3,   7,  13,   2,   2,   4,   6,   6,   8,   5,  17,  12,
     7,   9,   8,   8,   2,   4,   9,   4,   6,   7,   9,   4,   4,
     2,   6,   5,   8,   4,   5,   8,   4,   3,   9,   5,   5,   6,
-    4,   6,   2,   9,   3,   7,
+    4,   6,   2,   9,   3,   7,   4,   6,   6,   6,   5,   7,
 };
 /* aKWOffset[i] is the index into zKWText[] of the start of
  ** the text for the i-th keyword. */
-static const unsigned short int aKWOffset[136] = {
+static const unsigned short int aKWOffset[142] = {
     0,   2,   2,   8,   9,  14,  16,  20,  23,  25,  25,  29,  33,
     36,  41,  46,  48,  53,  54,  59,  62,  65,  67,  69,  78,  81,
     86,  91,  95,  96, 101, 105, 109, 117, 122, 128, 136, 142, 152,
@@ -408,7 +415,7 @@ static const unsigned short int aKWOffset[136] = {
     381, 387, 389, 396, 398, 400, 409, 413, 419, 425, 433, 438, 438,
     438, 454, 463, 470, 471, 478, 481, 490, 494, 499, 506, 515, 519,
     523, 525, 531, 535, 543, 546, 551, 559, 559, 563, 572, 577, 582,
-    588, 591, 594, 597, 602, 606,
+    588, 591, 594, 597, 602, 606, 613, 617, 623, 629, 635, 640,
 };
 
 static const unsigned char aiClass[] = {
@@ -510,7 +517,7 @@ SQLITE_PRIVATE const unsigned char sqlite3CtypeMap[256] = {
 };
 
 /* aKWCode[i] is the parser symbol code for the i-th keyword */
-static const unsigned char aKWCode[136] = {
+static const unsigned char aKWCode[142] = {
     TK_REINDEX,    TK_INDEXED,    TK_INDEX,      TK_DESC,       TK_ESCAPE,
     TK_EACH,       TK_CHECK,      TK_KEY,        TK_BEFORE,     TK_FOREIGN,
     TK_FOR,        TK_IGNORE,     TK_LIKE_KW,    TK_EXPLAIN,    TK_INSTEAD,
@@ -538,7 +545,8 @@ static const unsigned char aKWCode[136] = {
     TK_RESTRICT,   TK_OVER,       TK_JOIN_KW,    TK_ROLLBACK,   TK_ROWS,
     TK_ROW,        TK_UNBOUNDED,  TK_UNION,      TK_USING,      TK_VACUUM,
     TK_VIEW,       TK_WINDOW,     TK_DO,         TK_INITIALLY,  TK_ALL,
-    TK_PRIMARY,
+    TK_PRIMARY,     TK_TASK,      TK_CANCEL,     TK_UPLOAD,     TK_HAPPEN,
+    TK_TIMES,       TK_SECONDS,
 };
 
 
@@ -588,6 +596,7 @@ int sqlite3GetToken(const unsigned char *z, int *tokenType){
             return i;
         }
         case CC_MINUS: {
+            //sql 注释
             if( z[1]=='-' ){
                 for(i=2; (c=z[i])!=0 && c!='\n'; i++){}
                 *tokenType = TK_SPACE;   /* IMP: R-22934-25134 */
@@ -859,12 +868,23 @@ static int keywordCode(const char *z, int n, int *pType){
         
         i = ((charMap(z[0])*4) ^ (charMap(z[n-1])*3) ^ n) % 127;
         
-        printf("keywordCode->%s\n",z);
-        printf("keywordCode->n:%d\n",n);
-        printf("keywordCode->z[0]:%c\tz[n-1]:%c\n",z[0],z[n-1]);
-        printf("keywordCode->i:%d\n",i);
+       
+        
+        for (int m = 0; m < n; m++) {
+            
+            printf("%c",z[m]);
+            
+        }
+        
+        
+        printf(" %d %d ",n,i);
+
+        
         for(i=((int)aKWHash[i])-1; i>=0; i=((int)aKWNext[i])-1){
-            printf("hash->i:%d\n",i);
+            
+            //printf("next->:%d\n",i)
+           // printf("aKWLen[%d]:%d\n",i,aKWLen[i]);
+            
             if( aKWLen[i]!=n ) continue;
             j = 0;
             zKW = &zKWText[aKWOffset[i]];
@@ -1011,6 +1031,13 @@ static int keywordCode(const char *z, int n, int *pType){
             testcase( i==133 ); /* INITIALLY */
             testcase( i==134 ); /* ALL */
             testcase( i==135 ); /* PRIMARY */
+    
+            testcase( i==136 ); /* TASK */
+            testcase( i==137 ); /* CANCEL */
+            testcase( i==138 ); /* UPLOAD */
+            testcase( i==139 ); /* HAPPEN */
+            testcase( i==140 ); /* TIMES */
+            testcase( i==141 ); /* SECONDS */
             *pType = aKWCode[i];
             break;
         }
