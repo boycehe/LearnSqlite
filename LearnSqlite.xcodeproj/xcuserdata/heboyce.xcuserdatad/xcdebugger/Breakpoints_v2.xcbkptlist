@@ -42,22 +42,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LearnSqlite/src/signle/sqlite3.c"
-            timestampString = "574187430.766929"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151746"
-            endingLineNumber = "151746"
-            landmarkName = "winRead"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LearnSqlite/src/signle/sqlite3.c"
             timestampString = "574187430.76906"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
