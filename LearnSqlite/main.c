@@ -17,7 +17,7 @@
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-  /*
+  
     sqlite3 *_db;
     const char *dbPath = "/Users/heboyce/Desktop/sqlitedemo.db";
     const char *t_sql = "create table if not exists t_student (id integer primary key autoincrement, name text, age integer);";
@@ -32,11 +32,11 @@ int main(int argc, const char * argv[]) {
 
     
     return 1;
-   */
+   
  
   // const char *keywords = "DESC REINDEX INDEXED INDEX ESCAPE EACH CHECK KEY BEFORE FOREIGN FOR IGNORE REGEXP EXPLAIN INSTEAD ADD DATABASE AS SELECT TABLE LEFT THEN END DEFERRABLE ELSE EXCEPT TRANSACTION ACTION ON NATURAL ALTER RAISE EXCLUSIVE EXISTS SAVEPOINT INTERSECT TRIGGER REFERENCES CONSTRAINT INTO OFFSET OF SET TEMPORARY TEMP OR UNIQUE QUERY WITHOUT WITH OUTER RELEASE ATTACH HAVING GROUP UPDATE BEGIN INNER RANGE BETWEEN NOTHING GLOB BY CASCADE ASC DELETE CASE COLLATE CREATE CURRENT_DATE DETACH IMMEDIATE JOIN INSERT LIKE MATCH PLAN ANALYZE PRAGMA ABORT VALUES VIRTUAL LIMIT WHEN NOTNULL NOT NO NULL WHERE RECURSIVE AFTER RENAME AND DEFAULT AUTOINCREMENT TO IN CAST COLUMN COMMIT CONFLICT CROSS CURRENT_TIMESTAMP CURRENT_TIME CURRENT PARTITION DEFERRED DISTINCT IS DROP PRECEDING FAIL FILTER REPLACE FOLLOWING FROM FULL IF ISNULL ORDER RESTRICT OVER RIGHT ROLLBACK ROWS ROW UNBOUNDED UNION USING VACUUM VIEW WINDOW DO INITIALLY ALL PRIMARY";
     const char *keywords = "seconds";//task cancel upload happen times seconds
-   // const char *keywords = "create table if not exists t_student (id integer primary key autoincrement, name text, age integer);";
+  //  const char *keywords = "create table if not exists t_student (id integer primary key autoincrement, name text, age integer);";
    // UNIQUE UPDATE CURRENT_DATE CURRENT_TIME
    // const char *keywords = "SELECT INSERT";
    
