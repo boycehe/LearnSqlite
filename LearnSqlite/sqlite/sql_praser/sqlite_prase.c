@@ -6,11 +6,18 @@
 //  Copyright © 2019 heboyce. All rights reserved.
 //
 
-#ifndef sqlite_prase_h
-#define sqlite_prase_h
+#include "sqlite_prase.h"
+SQLITE_API void sqlite3_free(void *p);
 
+SQLITE_PRIVATE void *sqlite3Malloc(u64);
+SQLITE_PRIVATE   void *sqlite3ParserAlloc(void*(*)(u64), Parse*);
+static int analyzeWindowKeyword(const unsigned char *z);
+static int analyzeOverKeyword(const unsigned char *z, int lastToken);
+static int analyzeFilterKeyword(const unsigned char *z, int lastToken);
+static int getToken(const unsigned char **pz);
+SQLITE_API void sqlite3_free(void *p);
 
-SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
+static int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
     int nErr = 0;                   /* Number of errors encountered */
     void *pEngine;                  /* The LEMON-generated LALR(1) parser */
     int n = 0;                      /* Length of the next token token */
@@ -172,7 +179,7 @@ SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzEr
         assert( nErr==0 || pParse->rc!=SQLITE_OK );
         return nErr;
     }
-
+    
     
     
 SQLITE_PRIVATE void *sqlite3ParserAlloc(void *(*mallocProc)(YYMALLOCARGTYPE) sqlite3ParserCTX_PDECL){
@@ -181,54 +188,54 @@ SQLITE_PRIVATE void *sqlite3ParserAlloc(void *(*mallocProc)(YYMALLOCARGTYPE) sql
     if( yypParser ){
         sqlite3ParserCTX_STORE
         sqlite3ParserInit(yypParser sqlite3ParserCTX_PARAM);
-     }
-     return (void*)yypParser;
+    }
+        return (void*)yypParser;
 }
     
 static int analyzeWindowKeyword(const unsigned char *z){
-       int t;
-        t = getToken(&z);
-        if( t!=TK_ID ) return TK_ID;
-        t = getToken(&z);
-        if( t!=TK_AS ) return TK_ID;
-        return TK_WINDOW;
+      int t;
+      t = getToken(&z);
+      if( t!=TK_ID ) return TK_ID;
+      t = getToken(&z);
+      if( t!=TK_AS ) return TK_ID;
+      return TK_WINDOW;
 }
 static int analyzeOverKeyword(const unsigned char *z, int lastToken){
-      if( lastToken==TK_RP ){
+    if( lastToken==TK_RP ){
             int t = getToken(&z);
             if( t==TK_LP || t==TK_ID ) return TK_OVER;
-        }
-        return TK_ID;
+     }
+      return TK_ID;
 }
     
 static int analyzeFilterKeyword(const unsigned char *z, int lastToken){
-        if( lastToken==TK_RP && getToken(&z)==TK_LP ){
-            return TK_FILTER;
-        }
+     if( lastToken==TK_RP && getToken(&z)==TK_LP ){
+          return TK_FILTER;
+      }
         return TK_ID;
 }
-
-static int getToken(const unsigned char **pz){
-    const unsigned char *z = *pz;
-    int t;                          /* Token type to return */
-    do {
-        z += sqlite3GetToken(z, &t);
-    }while( t==TK_SPACE );
-    if( t==TK_ID
-        || t==TK_STRING
-        || t==TK_JOIN_KW
-        || t==TK_WINDOW
-        || t==TK_OVER
-        || sqlite3ParserFallback(t)==TK_ID
-        ){
-        t = TK_ID;
-    }
-    *pz = z;
-    return t;
-}
-
-
-
-
     
-#endif /* sqlite_prase_h */
+static int getToken(const unsigned char **pz){
+        const unsigned char *z = *pz;
+        int t;                          /* Token type to return */
+        do {
+            z += sqlite3GetToken(z, &t);
+        }while( t==TK_SPACE );
+        if( t==TK_ID
+           || t==TK_STRING
+           || t==TK_JOIN_KW
+           || t==TK_WINDOW
+           || t==TK_OVER
+           || sqlite3ParserFallback(t)==TK_ID
+           ){
+            t = TK_ID;
+        }
+        *pz = z;
+        return t;
+    }
+    
+    
+    
+SQLITE_API void sqlite3_free(void *p){
+        //todo
+}
