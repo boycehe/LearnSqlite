@@ -7,17 +7,21 @@
 //
 
 #include "sqlite_prase.h"
-SQLITE_API void sqlite3_free(void *p);
+#include <stdarg.h>
 
 SQLITE_PRIVATE void *sqlite3Malloc(u64);
-SQLITE_PRIVATE   void *sqlite3ParserAlloc(void*(*)(u64), Parse*);
-static int analyzeWindowKeyword(const unsigned char *z);
-static int analyzeOverKeyword(const unsigned char *z, int lastToken);
-static int analyzeFilterKeyword(const unsigned char *z, int lastToken);
-static int getToken(const unsigned char **pz);
-SQLITE_API void sqlite3_free(void *p);
+SQLITE_PRIVATE void *sqlite3ParserAlloc(void*(*)(u64), Parse*);
+SQLITE_PRIVATE int   analyzeWindowKeyword(const unsigned char *z);
+SQLITE_PRIVATE int   analyzeOverKeyword(const unsigned char *z, int lastToken);
+SQLITE_PRIVATE int   analyzeFilterKeyword(const unsigned char *z, int lastToken);
+SQLITE_PRIVATE int   getToken(const unsigned char **pz);
+SQLITE_PRIVATE void sqlite3OomFault(sqlite3 *db);
+SQLITE_PRIVATE void sqlite3ErrorMsg(Parse*, const char*, ...);
+SQLITE_API void      sqlite3_free(void *p);
+SQLITE_PRIVATE void sqlite3Parser(void*, int, Token);
 
-static int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
+
+SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
     int nErr = 0;                   /* Number of errors encountered */
     void *pEngine;                  /* The LEMON-generated LALR(1) parser */
     int n = 0;                      /* Length of the next token token */
@@ -178,7 +182,10 @@ static int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
         }
         assert( nErr==0 || pParse->rc!=SQLITE_OK );
         return nErr;
-    }
+}
+    
+    
+    
     
     
     
@@ -238,4 +245,24 @@ static int getToken(const unsigned char **pz){
     
 SQLITE_API void sqlite3_free(void *p){
         //todo
+}
+    
+SQLITE_PRIVATE void *sqlite3Malloc(u64 n){
+   void *p;
+  
+   return p;
+}
+    
+SQLITE_PRIVATE void sqlite3OomFault(sqlite3 *db){
+  if( db->mallocFailed==0 && db->bBenignMalloc==0 ){
+      db->mallocFailed = 1;
+     if( db->nVdbeExec>0 ){
+         db->u1.isInterrupted = 1;
+       }
+         db->lookaside.bDisable++;
+     }
+}
+
+SQLITE_PRIVATE void sqlite3ErrorMsg(Parse *pParse, const char *zFormat, ...){
+    
 }

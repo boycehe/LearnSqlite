@@ -17,9 +17,7 @@
 #define sqlite3ParserCTX_STORE yypParser->pParse=pParse;
 #define sqlite3ParserCTX_PARAM ,pParse
 
-
 typedef struct yyParser yyParser;
-
 typedef struct Parse Parse;
 typedef struct Token Token;
 
@@ -70,5 +68,7 @@ struct yyParser {
     yyStackEntry *yystackEnd;            /* Last entry in the stack */
 #endif
 };
+
+SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg);
 
 #endif /* sqlite_prase_h */

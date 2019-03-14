@@ -9,6 +9,8 @@
 #ifndef sqlite_common_h
 #define sqlite_common_h
 
+#include <assert.h>
+
 #define UINT32_TYPE unsigned int
 #define UINT16_TYPE unsigned short int
 #define INT16_TYPE short int
@@ -51,7 +53,7 @@
 #define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
 #define SQLITE_LIMIT_WORKER_THREADS           11
 #define SQLITE_LIMIT_SQL_LENGTH                1
-#define SQLITE_NOMEM_BKPT sqlite3NomemError(__LINE__)
+#define SQLITE_NOMEM_BKPT SQLITE_NOMEM
 
 
 #define sqlite3ParserARG_SDECL
@@ -85,6 +87,7 @@ typedef INT8_TYPE i8;              /* 1-byte signed integer */
 #define SQLITE_API
 #define YYMALLOCARGTYPE  u64
 
+
 typedef struct sqlite3 sqlite3;
 typedef struct Db Db;
 typedef struct Table Table;
@@ -94,6 +97,8 @@ typedef struct TableLock TableLock;
 typedef struct With With;
 typedef struct AutoincInfo AutoincInfo;
 typedef struct yyStackEntry yyStackEntry;
+typedef struct Lookaside Lookaside;
+typedef struct LookasideSlot LookasideSlot;
 typedef unsigned long long int sqlite_uint64;
 typedef sqlite_uint64 sqlite3_uint64;
 typedef sqlite3_uint64 u64;       /* 8-byte unsigned integer */
@@ -101,6 +106,18 @@ typedef i16 ynVar;
 typedef int VList;
 #define IN_RENAME_OBJECT 0
 
+
+struct Lookaside {
+    u32 bDisable;           /* Only operate the lookaside when zero */
+    u16 sz;                 /* Size of each buffer in bytes */
+    u8 bMalloced;           /* True if pStart obtained from sqlite3_malloc() */
+    u32 nSlot;              /* Number of lookaside slots allocated */
+    u32 anStat[3];          /* 0: hits.  1: size misses.  2: full misses */
+    LookasideSlot *pInit;   /* List of buffers not previously used */
+    LookasideSlot *pFree;   /* List of available buffers */
+    void *pStart;           /* First byte of available memory space */
+    void *pEnd;             /* First byte past end of available space */
+};
 
 typedef union {
     int yyinit;
@@ -114,7 +131,21 @@ struct sqlite3 {
         volatile int isInterrupted; /* True if sqlite3_interrupt has been called */
         double notUsed1;            /* Spacer */
     } u1;
+
+    int nVdbeExec;                /* Number of nested calls to VdbeExec() */
+    u8 enc;                       /* Text encoding */
+    u8 autoCommit;                /* The auto-commit flag. */
+    u8 temp_store;                /* 1: file 2: memory 0: default */
     u8 mallocFailed;              /* True if we have seen a malloc failure */
+    u8 bBenignMalloc;             /* Do not require OOMs if true */
+    u8 dfltLockMode;              /* Default locking-mode for attached dbs */
+    Lookaside lookaside;          /* Lookaside malloc configuration */
+    u8 suppressErr;               /* Do not issue error messages if true */
+    u8 vtabOnConflict;            /* Value to return for s3_vtab_on_conflict() */
+    u8 isTransactionSavepoint;    /* True if the outermost savepoint is a TS */
+    u8 mTrace;                    /* zero or more SQLITE_TRACE flags */
+    u8 noSharedCache;             /* True if no shared-cache backends */
+    u8 nSqlExec;                  /* Number of pending OP_SqlExec opcodes */
 };
 
 struct Token {
@@ -164,6 +195,9 @@ struct yyStackEntry {
                             ** is the value of the token  */
 };
 
+struct LookasideSlot {
+    LookasideSlot *pNext;    /* Next buffer in the list of free buffers */
+};
 
 
 
