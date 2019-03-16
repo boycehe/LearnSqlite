@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LearnSqlite/sqlite/sql_praser/sqlite_token.c"
-            timestampString = "573757528.36474"
+            timestampString = "574332839.1918679"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "888"
-            endingLineNumber = "888">
+            startingLineNumber = "852"
+            endingLineNumber = "852">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LearnSqlite/sqlite/sql_praser/sqlite_token.c"
-            timestampString = "573757528.3655601"
+            timestampString = "574332839.191941"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "888"
-            endingLineNumber = "888">
+            startingLineNumber = "852"
+            endingLineNumber = "852">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

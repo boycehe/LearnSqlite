@@ -62,12 +62,31 @@
 #define sqlite3ParserARG_FETCH
 #define sqlite3ParserARG_STORE
 #define sqlite3ParserCTX_SDECL Parse *pParse;
+#define sqlite3ParserCTX_PDECL ,Parse *pParse
+#define sqlite3ParserCTX_PARAM ,pParse
+#define sqlite3ParserCTX_FETCH Parse *pParse=yypParser->pParse;
+#define sqlite3ParserCTX_STORE yypParser->pParse=pParse;
 
 #define YYCODETYPE unsigned short int
 #define YYNOCODE 277
 #define YYACTIONTYPE unsigned short int
 #define YYWILDCARD 91
 #define sqlite3ParserTOKENTYPE Token
+
+#define YYFALLBACK 1
+#define YYNSTATE             521
+#define YYNRULE              367
+#define YYNTOKEN             155
+#define YY_MAX_SHIFT         520
+#define YY_MIN_SHIFTREDUCE   756
+#define YY_MAX_SHIFTREDUCE   1122
+#define YY_ERROR_ACTION      1123
+#define YY_ACCEPT_ACTION     1124
+#define YY_NO_ACTION         1125
+#define YY_MIN_REDUCE        1126
+#define YY_MAX_REDUCE        1492
+
+
 
 #define PARSE_MODE_NORMAL        0
 #define PARSE_MODE_DECLARE_VTAB  1
@@ -87,7 +106,7 @@ typedef INT8_TYPE i8;              /* 1-byte signed integer */
 #define SQLITE_API
 #define YYMALLOCARGTYPE  u64
 
-
+typedef struct Token Token;
 typedef struct sqlite3 sqlite3;
 typedef struct Db Db;
 typedef struct Table Table;
@@ -106,6 +125,11 @@ typedef i16 ynVar;
 typedef int VList;
 #define IN_RENAME_OBJECT 0
 
+struct Token {
+    const char *z;     /* Text of the token.  Not NULL-terminated! */
+    unsigned int n;    /* Number of characters in this token */
+};
+
 
 struct Lookaside {
     u32 bDisable;           /* Only operate the lookaside when zero */
@@ -121,6 +145,7 @@ struct Lookaside {
 
 typedef union {
     int yyinit;
+    sqlite3ParserTOKENTYPE yy0;
    
 } YYMINORTYPE;
 
@@ -148,10 +173,6 @@ struct sqlite3 {
     u8 nSqlExec;                  /* Number of pending OP_SqlExec opcodes */
 };
 
-struct Token {
-    const char *z;     /* Text of the token.  Not NULL-terminated! */
-    unsigned int n;    /* Number of characters in this token */
-};
 
 struct Vdbe {
     sqlite3 *db;

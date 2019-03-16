@@ -15,10 +15,30 @@ SQLITE_PRIVATE int   analyzeWindowKeyword(const unsigned char *z);
 SQLITE_PRIVATE int   analyzeOverKeyword(const unsigned char *z, int lastToken);
 SQLITE_PRIVATE int   analyzeFilterKeyword(const unsigned char *z, int lastToken);
 SQLITE_PRIVATE int   getToken(const unsigned char **pz);
-SQLITE_PRIVATE void sqlite3OomFault(sqlite3 *db);
-SQLITE_PRIVATE void sqlite3ErrorMsg(Parse*, const char*, ...);
-SQLITE_API void      sqlite3_free(void *p);
-SQLITE_PRIVATE void sqlite3Parser(void*, int, Token);
+SQLITE_PRIVATE void  sqlite3OomFault(sqlite3 *db);
+SQLITE_PRIVATE void  sqlite3ErrorMsg(Parse*, const char*, ...);
+SQLITE_API     void  sqlite3_free(void *p);
+SQLITE_PRIVATE void  sqlite3Parser(void*, int, Token);
+SQLITE_PRIVATE char *sqlite3MPrintf(sqlite3 *db, const char *zFormat, ...);
+SQLITE_PRIVATE void  sqlite3ParserFree(void *p,void (*freeProc)(void*));
+SQLITE_PRIVATE const char *sqlite3ErrStr(int rc);
+SQLITE_API     void sqlite3_log(int iErrCode, const char *zFormat, ...);
+SQLITE_PRIVATE void sqlite3DeleteTable(sqlite3 *db, Table *pTable);
+SQLITE_PRIVATE void sqlite3VdbeDelete(Vdbe *p);
+SQLITE_PRIVATE void sqlite3DbFree(sqlite3 *db, void *p);
+SQLITE_PRIVATE void sqlite3DeleteTrigger(sqlite3 *db, Trigger *pTrigger);
+SQLITE_PRIVATE void sqlite3WithDelete(sqlite3 *db, With *pWith);
+SQLITE_PRIVATE void sqlite3DbFreeNN(sqlite3 *db, void *p);
+static YYACTIONTYPE yy_find_shift_action(YYCODETYPE iLookAhead, YYACTIONTYPE stateno);
+static YYACTIONTYPE yy_reduce( yyParser *yypParser,unsigned int yyruleno,int yyLookahead,sqlite3ParserTOKENTYPE yyLookaheadToken sqlite3ParserCTX_PDECL);
+static void yy_shift(yyParser *yypParser,YYACTIONTYPE yyNewState,YYCODETYPE yyMajor,sqlite3ParserTOKENTYPE yyMinor);
+static void yy_accept(yyParser *yypParser);
+static void yy_syntax_error(yyParser *yypParser,int yymajor,sqlite3ParserTOKENTYPE yyminor);
+static void yy_destructor(yyParser *yypParser,YYCODETYPE yymajor,YYMINORTYPE *yypminor);
+static void yy_parse_failed(yyParser *yypParser);
+SQLITE_PRIVATE void sqlite3ParserInit(void *yypRawParser sqlite3ParserCTX_PDECL);
+SQLITE_PRIVATE int sqlite3ParserFallback(int iToken);
+
 
 
 SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzErrMsg){
@@ -186,6 +206,118 @@ SQLITE_PRIVATE int sqlite3RunParser(Parse *pParse, const char *zSql, char **pzEr
     
     
     
+SQLITE_PRIVATE void sqlite3Parser(
+  void *yyp,                   /* The parser */
+  int yymajor,                 /* The major token code number */
+  sqlite3ParserTOKENTYPE yyminor       /* The value for the token */
+  sqlite3ParserARG_PDECL               /* Optional %extra_argument parameter */
+){
+  YYMINORTYPE yyminorunion;
+  YYACTIONTYPE yyact;   /* The parser action. */
+#if !defined(YYERRORSYMBOL) && !defined(YYNOERRORRECOVERY)
+  int yyendofinput;     /* True if we are at the end of input */
+#endif
+#ifdef YYERRORSYMBOL
+  int yyerrorhit = 0;   /* True if yymajor has invoked an error */
+#endif
+  yyParser *yypParser = (yyParser*)yyp;  /* The parser */
+  sqlite3ParserCTX_FETCH
+  sqlite3ParserARG_STORE
+
+  assert( yypParser->yytos!=0 );
+#if !defined(YYERRORSYMBOL) && !defined(YYNOERRORRECOVERY)
+  yyendofinput = (yymajor==0);
+#endif
+
+  yyact = yypParser->yytos->stateno;
+
+
+  do{
+    assert( yyact==yypParser->yytos->stateno );
+    yyact = yy_find_shift_action((YYCODETYPE)yymajor,yyact);
+    if( yyact >= YY_MIN_REDUCE ){
+      yyact = yy_reduce(yypParser,yyact-YY_MIN_REDUCE,yymajor,
+                        yyminor sqlite3ParserCTX_PARAM);
+    }else if( yyact <= YY_MAX_SHIFTREDUCE ){
+      yy_shift(yypParser,yyact,(YYCODETYPE)yymajor,yyminor);
+#ifndef YYNOERRORRECOVERY
+      yypParser->yyerrcnt--;
+#endif
+      break;
+    }else if( yyact==YY_ACCEPT_ACTION ){
+      yypParser->yytos--;
+      yy_accept(yypParser);
+      return;
+    }else{
+      assert( yyact == YY_ERROR_ACTION );
+      yyminorunion.yy0 = yyminor;
+#ifdef YYERRORSYMBOL
+      int yymx;
+#endif
+
+#ifdef YYERRORSYMBOL
+  
+      if( yypParser->yyerrcnt<0 ){
+        yy_syntax_error(yypParser,yymajor,yyminor);
+      }
+      yymx = yypParser->yytos->major;
+      if( yymx==YYERRORSYMBOL || yyerrorhit ){
+#ifndef NDEBUG
+        if( yyTraceFILE ){
+          fprintf(yyTraceFILE,"%sDiscard input token %s\n",
+             yyTracePrompt,yyTokenName[yymajor]);
+        }
+#endif
+        yy_destructor(yypParser, (YYCODETYPE)yymajor, &yyminorunion);
+        yymajor = YYNOCODE;
+      }else{
+        while( yypParser->yytos >= yypParser->yystack
+            && (yyact = yy_find_reduce_action(
+                        yypParser->yytos->stateno,
+                        YYERRORSYMBOL)) > YY_MAX_SHIFTREDUCE
+        ){
+          yy_pop_parser_stack(yypParser);
+        }
+        if( yypParser->yytos < yypParser->yystack || yymajor==0 ){
+          yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
+          yy_parse_failed(yypParser);
+#ifndef YYNOERRORRECOVERY
+          yypParser->yyerrcnt = -1;
+#endif
+          yymajor = YYNOCODE;
+        }else if( yymx!=YYERRORSYMBOL ){
+          yy_shift(yypParser,yyact,YYERRORSYMBOL,yyminor);
+        }
+      }
+      yypParser->yyerrcnt = 3;
+      yyerrorhit = 1;
+      if( yymajor==YYNOCODE ) break;
+      yyact = yypParser->yytos->stateno;
+#elif defined(YYNOERRORRECOVERY)
+    
+      yy_syntax_error(yypParser,yymajor, yyminor);
+      yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
+      break;
+#else  /* YYERRORSYMBOL is not defined */
+    
+      if( yypParser->yyerrcnt<=0 ){
+        yy_syntax_error(yypParser,yymajor, yyminor);
+      }
+      yypParser->yyerrcnt = 3;
+      yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
+      if( yyendofinput ){
+        yy_parse_failed(yypParser);
+#ifndef YYNOERRORRECOVERY
+        yypParser->yyerrcnt = -1;
+#endif
+      }
+      break;
+#endif
+    }
+  }while( yypParser->yytos>yypParser->yystack );
+
+  return;
+}
     
     
     
@@ -265,4 +397,114 @@ SQLITE_PRIVATE void sqlite3OomFault(sqlite3 *db){
 
 SQLITE_PRIVATE void sqlite3ErrorMsg(Parse *pParse, const char *zFormat, ...){
     
+}
+
+/*
+ ** Print into memory obtained from sqliteMalloc().  Use the internal
+ ** %-conversion extensions.
+*/
+SQLITE_PRIVATE char *sqlite3MPrintf(sqlite3 *db, const char *zFormat, ...){
+  va_list ap;
+  char *z;
+    /*
+  va_start(ap, zFormat);
+  z = sqlite3VMPrintf(db, zFormat, ap);
+  va_end(ap);
+     */
+  return z;
+
+}
+
+SQLITE_PRIVATE void sqlite3ParserFree(
+  void *p,                    /* The parser to be deleted */
+  void (*freeProc)(void*)     /* Function used to reclaim memory */
+){
+#ifndef YYPARSEFREENEVERNULL
+        if( p==0 ) return;
+#endif
+      //  sqlite3ParserFinalize(p);
+        (*freeProc)(p);
+}
+
+SQLITE_PRIVATE const char *sqlite3ErrStr(int rc){
+  
+        const char *zErr = "unknown error";
+    
+        return zErr;
+}
+
+SQLITE_API void sqlite3_log(int iErrCode, const char *zFormat, ...){
+    /*
+      va_list ap;
+      if( sqlite3GlobalConfig.xLog ){
+            va_start(ap, zFormat);
+            renderLogMsg(iErrCode, zFormat, ap);
+            va_end(ap);
+        }
+    */
+}
+
+SQLITE_PRIVATE void sqlite3DeleteTable(sqlite3 *db, Table *pTable){
+  /* Do not delete the table until the reference count reaches zero. */
+  
+}
+
+SQLITE_PRIVATE void sqlite3VdbeDelete(Vdbe *p){
+ 
+}
+
+SQLITE_PRIVATE void sqlite3DbFree(sqlite3 *db, void *p){
+  
+}
+
+SQLITE_PRIVATE void sqlite3DeleteTrigger(sqlite3 *db, Trigger *pTrigger){
+ 
+}
+
+SQLITE_PRIVATE void sqlite3WithDelete(sqlite3 *db, With *pWith){
+  
+}
+
+SQLITE_PRIVATE void sqlite3DbFreeNN(sqlite3 *db, void *p){
+  
+}
+
+static YYACTIONTYPE yy_find_shift_action(YYCODETYPE iLookAhead, YYACTIONTYPE stateno){
+    
+   int i;
+   return i;
+    
+}
+
+static YYACTIONTYPE yy_reduce( yyParser *yypParser,unsigned int yyruleno,int yyLookahead,sqlite3ParserTOKENTYPE yyLookaheadToken sqlite3ParserCTX_PDECL){
+  return 1;
+}
+
+static void yy_shift(yyParser *yypParser,YYACTIONTYPE yyNewState,YYCODETYPE yyMajor,sqlite3ParserTOKENTYPE yyMinor){
+ 
+}    
+
+
+static void yy_accept(yyParser *yypParser){
+ 
+}
+
+static void yy_syntax_error(yyParser *yypParser,int yymajor,sqlite3ParserTOKENTYPE yyminor){
+
+}
+
+static void yy_destructor(yyParser *yypParser,YYCODETYPE yymajor,YYMINORTYPE *yypminor){
+
+}
+static void yy_parse_failed(yyParser *yypParser){
+
+}
+
+SQLITE_PRIVATE void sqlite3ParserInit(void *yypRawParser sqlite3ParserCTX_PDECL){
+    
+}
+
+SQLITE_PRIVATE int sqlite3ParserFallback(int iToken){
+    
+    return 1;
 }

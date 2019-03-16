@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		003C725D21E76C3500F6A030 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 003C725C21E76C3500F6A030 /* main.c */; };
-		006F87C0223A063A006FCCE3 /* sqlite_prase.c in Sources */ = {isa = PBXBuildFile; fileRef = 006F87BF223A063A006FCCE3 /* sqlite_prase.c */; };
-		00D5CC8A21E99941000DF560 /* sqlite_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 00D5CC8921E99941000DF560 /* sqlite_token.c */; };
+		00E574BC223CD0540042EFD4 /* sqlite_prase.c in Sources */ = {isa = PBXBuildFile; fileRef = 00E574BA223CD0540042EFD4 /* sqlite_prase.c */; };
+		00E574BD223CD0540042EFD4 /* sqlite_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 00E574BB223CD0540042EFD4 /* sqlite_token.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,11 +28,11 @@
 		003C725921E76C3500F6A030 /* LearnSqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LearnSqlite; sourceTree = BUILT_PRODUCTS_DIR; };
 		003C725C21E76C3500F6A030 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		003C726C21E87A1200F6A030 /* LexicalAnalysis.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LexicalAnalysis.md; sourceTree = "<group>"; };
-		006F87BE223A063A006FCCE3 /* sqlite_prase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite_prase.h; sourceTree = "<group>"; };
-		006F87BF223A063A006FCCE3 /* sqlite_prase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite_prase.c; sourceTree = "<group>"; };
-		006F87C1223A06A1006FCCE3 /* sqlite_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite_common.h; sourceTree = "<group>"; };
-		00D5CC8821E99941000DF560 /* sqlite_token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite_token.h; sourceTree = "<group>"; };
-		00D5CC8921E99941000DF560 /* sqlite_token.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite_token.c; sourceTree = "<group>"; };
+		00E574B7223CD0540042EFD4 /* sqlite_prase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite_prase.h; sourceTree = "<group>"; };
+		00E574B8223CD0540042EFD4 /* sqlite_token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite_token.h; sourceTree = "<group>"; };
+		00E574B9223CD0540042EFD4 /* sqlite_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite_common.h; sourceTree = "<group>"; };
+		00E574BA223CD0540042EFD4 /* sqlite_prase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite_prase.c; sourceTree = "<group>"; };
+		00E574BB223CD0540042EFD4 /* sqlite_token.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite_token.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,11 +84,11 @@
 		00D5CC8121E8D1EC000DF560 /* sql_praser */ = {
 			isa = PBXGroup;
 			children = (
-				006F87C1223A06A1006FCCE3 /* sqlite_common.h */,
-				00D5CC8821E99941000DF560 /* sqlite_token.h */,
-				00D5CC8921E99941000DF560 /* sqlite_token.c */,
-				006F87BE223A063A006FCCE3 /* sqlite_prase.h */,
-				006F87BF223A063A006FCCE3 /* sqlite_prase.c */,
+				00E574B9223CD0540042EFD4 /* sqlite_common.h */,
+				00E574BA223CD0540042EFD4 /* sqlite_prase.c */,
+				00E574B7223CD0540042EFD4 /* sqlite_prase.h */,
+				00E574BB223CD0540042EFD4 /* sqlite_token.c */,
+				00E574B8223CD0540042EFD4 /* sqlite_token.h */,
 			);
 			path = sql_praser;
 			sourceTree = "<group>";
@@ -96,16 +96,8 @@
 		00D5D0C821FB2D14000DF560 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				00D5D16621FB2D14000DF560 /* signle */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		00D5D16621FB2D14000DF560 /* signle */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = signle;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,9 +156,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00E574BC223CD0540042EFD4 /* sqlite_prase.c in Sources */,
+				00E574BD223CD0540042EFD4 /* sqlite_token.c in Sources */,
 				003C725D21E76C3500F6A030 /* main.c in Sources */,
-				00D5CC8A21E99941000DF560 /* sqlite_token.c in Sources */,
-				006F87C0223A063A006FCCE3 /* sqlite_prase.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

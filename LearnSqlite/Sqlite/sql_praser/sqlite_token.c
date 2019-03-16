@@ -657,21 +657,8 @@ SQLITE_PRIVATE int keywordCode(const char *z, int n, int *pType){
         i = ((charMap(z[0])*4) ^ (charMap(z[n-1])*3) ^ n) % 127;
         
        
-        
-        for (int m = 0; m < n; m++) {
-            
-            printf("%c",z[m]);
-            
-        }
-        
-        
-        printf(" %d %d ",n,i);
-
-        
+      
         for(i=((int)aKWHash[i])-1; i>=0; i=((int)aKWNext[i])-1){
-            
-            //printf("next->:%d\n",i)
-           // printf("aKWLen[%d]:%d\n",i,aKWLen[i]);
             
             if( aKWLen[i]!=n ) continue;
             j = 0;
